@@ -1,0 +1,30 @@
+﻿version: "3.7"
+services:
+  asp-website-c:
+    image: asp-website-i
+    build:
+      context: ../Marketplace  # Point to the root of your project
+      dockerfile: Dockerfile  # Path to your Dockerfile from
+    environment:
+      pita-queen-v3: "Host=localhost; Database=marketplace-db; Port=15432; Username=admin; Password=test123"
+    ports:
+      - "2023:80"
+    depends_on:
+      - database
+    networks:
+      - marketplace-network
+  database:
+    image: "postgres:14.7-alpine"
+    ports:
+      - "15432:5432"
+    env_file:
+      - postgres.env
+    volumes:
+      - "./data:/var/data/db"
+    networks:
+      - marketplace-network
+
+networks:
+  marketplace-network:
+    name: marketplace-network
+    driver: bridge
